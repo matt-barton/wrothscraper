@@ -1,0 +1,11 @@
+{
+  "name"         : "wrothscraper",
+  "version"      : "0.0.1",
+  "description"  : "Scrape le wroth.",
+  "main"         : "app.js",
+  "author"       : "matt.cx",
+  "dependencies" : {
+    "request"    : "latest",
+    "cheerio"    : "latest"
+  }
+}
