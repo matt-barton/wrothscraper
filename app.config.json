@@ -1,0 +1,5 @@
+{
+  "urls": {
+    "dateIndexPage": "https://www.wrathofthebarclay.co.uk/interactive/board/board.php?date={date}"
+  }
+}

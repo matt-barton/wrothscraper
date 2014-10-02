@@ -6,6 +6,8 @@
   "author"       : "matt.cx",
   "dependencies" : {
     "request"    : "latest",
-    "cheerio"    : "latest"
+    "cheerio"    : "latest",
+    "cradle"     : "latest",
+    "couchapp"   : "latest"
   }
 }
