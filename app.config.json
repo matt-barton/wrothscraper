@@ -1,5 +1,7 @@
 {
   "urls": {
-    "dateIndexPage": "https://www.wrathofthebarclay.co.uk/interactive/board/board.php?date={date}"
+    "dateIndexPage": "https://www.wrathofthebarclay.co.uk/interactive/board/board.php?date={date}",
+    "messagePage": "https://www.wrathofthebarclay.co.uk/interactive/board/message.php?pid={postId}",
+    "postAjax": "https://www.wrathofthebarclay.co.uk/interactive/board/ajax2.php?latest_post={latestPostId}"
   }
 }
