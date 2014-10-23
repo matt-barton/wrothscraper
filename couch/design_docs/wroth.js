@@ -34,14 +34,43 @@ module.exports = {
       },
 
       reduce: function(keys, values) {
-        var ids = []
+        var ids = [];
        
         values.forEach(function(id) {
-          if (!isNaN(id))
-            ids.push(id);
+          if (!isNaN(id)) ids.push(id);
         });
        
         return Math.max.apply(Math, ids)
+      }
+    },
+
+    messageStubs: {
+
+      map: function(doc) {
+        if(doc.type && doc.type == 'message' && (typeof doc.complete == 'undefined' || doc.complete == false)) {
+          emit(doc.messageId, doc);
+        }
+      },
+
+      reduce: null
+    },
+
+    minMessageStubId: {
+
+      map: function(doc) {
+        if(doc.type && doc.type == 'message' && (typeof doc.complete == 'undefined' || doc.complete == false)) {
+          emit(null, doc.messageId);
+        }
+      },
+
+      reduce: function(keys, values) {
+        var ids = [];
+       
+        values.forEach(function(id) {
+          if (!isNaN(id)) ids.push(id);
+        });
+       
+        return Math.min.apply(Math, ids)
       }
     }
   }

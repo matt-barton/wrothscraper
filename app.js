@@ -18,14 +18,13 @@ var db = new(cradle.Connection)(dbConfig.couch.host, dbConfig.couch.port, dbConf
 /*
  * libraries
  */
-var $ = require('cheerio');
 var couch = require('./lib/couch')(db);
 var scrape = require('./lib/scrape')(appConfig, db);
 var parse = require('./lib/parse');
 require('./date.js');
 
 // main
-if(process.argv.length < 3) return console.error('Usage: node app.js [scrapeIndex|processIndex|scrapeMessageAjax]');
+if(process.argv.length < 3) return console.error('Usage: node app.js [scrapeIndex|processIndex|scrapeMessageAjax|scrapeMessageBody]');
 
 var action = process.argv[2];
 
@@ -64,37 +63,46 @@ switch (action) {
 		var numberOfScrapes = process.argv[3];
 		var pauseSeconds = process.argv[4];
 		var x=0;
-		function doScrape() {
+		function doScrapeStub() {
 			setTimeout(function() {
 				if (x++ < numberOfScrapes) {
 					console.log('scrape: ' + x);
 					couch.getMaxMessageId(function(maxMessageId){
-						scrape.scrapeMessageAjax(maxMessageId, doScrape);
+						console.log('max msg id : ' + maxMessageId);
+						scrape.scrapeMessageStub(maxMessageId, doScrapeStub);
 					});
 				}
 			}, (pauseSeconds * 1000));
 		}
-		doScrape();
+		doScrapeStub();
+	break;
+
+	case 'scrapeMessageBody':
+		if(process.argv.length < 5) return console.error('scrapeIndex usage: node app.js scrapeMessageBody numberOfScrapes pauseSeconds');
+		var numberOfScrapes = process.argv[3];
+		var pauseSeconds = process.argv[4];
+		var x=0;
+		function doScrapeBody() {
+			setTimeout(function() {
+				if (x++ < numberOfScrapes) {
+					console.log('scrape: ' + x);
+					couch.getEarliestMessageStubId(function(messageId){
+						scrape.scrapeMessageBody(messageId, doScrapeBody);
+					});
+				}
+			}, (pauseSeconds * 1000));
+		}
+		doScrapeBody();
 	break;
 
 	case 'test':
-		var request = require("request"), iconv  = require('iconv-lite');
-		var requestOptions  = { encoding: 'UTF-8', method: "GET", uri: appConfig.urls.postAjax.replace('{latestPostId}', 123482)};
-		var parseXml = require('xml2js').parseString;
-
-		request(requestOptions, function(error, response, body) {
-		    body = body.replace(/&amp;/g, '&')
-		    	.replace(/&/g, '&amp;')
-		    	.replace(/< /g, '&lt; ')
-		    console.log(body);
-		    parseXml(body, function (e, r) {
-		    	console.log(r);
-		    });
+		couch.getMaxMessageId(function(messageId){
+			console.log('Max: ' + messageId);
 		});
 	break;
 
 	default:
-		return console.error('Usage: node app.js [scrapeIndex|processIndex|scrapeMessageAjax]');
+		return console.error('Usage: node app.js [scrapeIndex|processIndex|scrapeMessageAjax|scrapeMessageBody]');
 		break;
 }
 
