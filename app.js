@@ -24,7 +24,7 @@ var parse = require('./lib/parse');
 require('./date.js');
 
 // main
-if(process.argv.length < 3) return console.error('Usage: node app.js [scrapeIndex|processIndex|scrapeMessageAjax|scrapeMessageBody]');
+if(process.argv.length < 3) return console.error('Usage: node app.js activity\n\nActivities:\n\tscrapeIndex\n\tprocessIndex\n\tscrapeMessageAjax\n\tscrapeMessageBody\n\tdenanny');
 
 var action = process.argv[2];
 
@@ -69,7 +69,7 @@ switch (action) {
 					console.log('scrape: ' + x);
 					couch.getMaxMessageId(function(maxMessageId){
 						console.log('max msg id : ' + maxMessageId);
-						scrape.scrapeMessageStub(maxMessageId, doScrapeStub);
+						scrape.scrapeMessageStub(maxMessageId + 1, doScrapeStub);
 					});
 				}
 			}, (pauseSeconds * 1000));
@@ -95,6 +95,33 @@ switch (action) {
 		doScrapeBody();
 	break;
 
+	case 'denanny':
+		couch.getCensoredMessages(function(messages){
+			var total = messages.length;
+			var soFar = 0;
+			for (var x=0; x<messages.length; x++) {
+				var message = messages[x].value;
+				if (message.title) {
+					message.title = message.title
+						.replace(/c\*\*t/g, 'cunt')
+						.replace(/s\*\*t/g, 'shit')
+						.replace(/f\*\*k/g, 'fuck');
+				}
+				if (message.body) {
+					message.body = message.body
+						.replace(/c\*\*t/g, 'cunt')
+						.replace(/s\*\*t/g, 'shit')
+						.replace(/f\*\*k/g, 'fuck');
+				}
+				db.save(message, function(e, r){
+					if (e) throw e;
+					soFar++;
+					console.log(soFar + '/' + total);
+				});
+			}
+		});
+	break;
+
 	case 'test':
 		couch.getMaxMessageId(function(messageId){
 			console.log('Max: ' + messageId);
@@ -102,7 +129,7 @@ switch (action) {
 	break;
 
 	default:
-		return console.error('Usage: node app.js [scrapeIndex|processIndex|scrapeMessageAjax|scrapeMessageBody]');
+		return console.error('Usage: node app.js activity\n\nActivities:\n\tscrapeIndex\n\tprocessIndex\n\tscrapeMessageAjax\n\tscrapeMessageBody\n\tdenanny');
 		break;
 }
 

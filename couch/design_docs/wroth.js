@@ -72,6 +72,20 @@ module.exports = {
        
         return Math.min.apply(Math, ids)
       }
+    },
+
+    censoredMessages: {
+
+      map: function(doc) {
+        if (doc.type && doc.type == 'message') {
+          if ((doc.title && (doc.title.indexOf('f**k') > -1 || doc.title.indexOf('c**t') > -1 || doc.title.indexOf('s**t') > -1)) ||
+            (doc.body && (doc.body.indexOf('f**k') > -1 || doc.body.indexOf('c**t') > -1 || doc.body.indexOf('s**t') > -1))) {
+            emit(doc.id, doc);
+          }
+        }
+      },
+
+      reduce: null
     }
   }
 };
