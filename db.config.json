@@ -1,10 +1,16 @@
 {
   "couch": {
-    "host": "localhost",
-    "port": 5984,
-    "db": "wrothscraper",
-    "options": {
+    "host"    : "localhost",
+    "port"    : 5984,
+    "db"      : "wrothscraper",
+    "options" : {
     	
     }
+  },
+  "mysql": {
+  	"host" : "localhost",
+  	"user" : "root",
+  	"pwd"  : "b00zylinge;;",
+  	"db"   : "wroth"
   }
 }

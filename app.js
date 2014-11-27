@@ -123,9 +123,9 @@ switch (action) {
 	break;
 
 	case 'test':
-		couch.getMaxMessageId(function(messageId){
-			console.log('Max: ' + messageId);
-		});
+
+		return console.log('no test setup');
+
 	break;
 
 	default:

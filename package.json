@@ -11,6 +11,7 @@
     "couchapp"   : "latest",
     "xml2js"     : "latest",
     "utf8"       : "latest",
-    "iconv-lite" : "latest"
+    "iconv-lite" : "latest",
+    "mysql"      : "latest"
   }
 }
