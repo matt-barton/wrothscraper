@@ -86,6 +86,27 @@ module.exports = {
       },
 
       reduce: null
+    },
+
+    minUnprocessedMessageId: {
+
+      map: function(doc) {
+        if(doc.type && doc.type == 'message'
+          && doc.complete && doc.complete == true 
+          && ((typeof doc.processed == 'undefined' || doc.processed == false))) {
+          emit(null, doc.messageId);
+        }
+      },
+
+      reduce: function(keys, values) {
+        var ids = [];
+       
+        values.forEach(function(id) {
+          if (!isNaN(id)) ids.push(id);
+        });
+       
+        return Math.min.apply(Math, ids)
+      }
     }
   }
 };

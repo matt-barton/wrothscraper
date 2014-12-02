@@ -20,11 +20,12 @@ var db = new(cradle.Connection)(dbConfig.couch.host, dbConfig.couch.port, dbConf
  */
 var couch = require('./lib/couch')(db);
 var scrape = require('./lib/scrape')(appConfig, db);
+var storage = require('./lib/storage')(dbConfig.mysql, couch);
 var parse = require('./lib/parse');
 require('./date.js');
 
 // main
-if(process.argv.length < 3) return console.error('Usage: node app.js activity\n\nActivities:\n\tscrapeIndex\n\tprocessIndex\n\tscrapeMessageAjax\n\tscrapeMessageBody\n\tdenanny');
+if(process.argv.length < 3) return console.error('Usage: node app.js activity\n\nActivities:\n\tscrapeIndex\n\tscrapeMessageAjax\n\tscrapeMessageBody\n\tdenanny\n\tprocessMessage');
 
 var action = process.argv[2];
 
@@ -54,12 +55,8 @@ switch (action) {
 		}
 	break;
 
-	case 'processIndex':
-		return console.log('processIndex not implemented');
-	break;
-
 	case 'scrapeMessageAjax':
-		if(process.argv.length < 5) return console.error('scrapeIndex usage: node app.js scrapeMessageAjax numberOfScrapes pauseSeconds');
+		if(process.argv.length < 5) return console.error('scrapeMessageAjax usage: node app.js scrapeMessageAjax numberOfScrapes pauseSeconds');
 		var numberOfScrapes = process.argv[3];
 		var pauseSeconds = process.argv[4];
 		var x=0;
@@ -78,7 +75,7 @@ switch (action) {
 	break;
 
 	case 'scrapeMessageBody':
-		if(process.argv.length < 5) return console.error('scrapeIndex usage: node app.js scrapeMessageBody numberOfScrapes pauseSeconds');
+		if(process.argv.length < 5) return console.error('scrapeMessageBody usage: node app.js scrapeMessageBody numberOfScrapes pauseSeconds');
 		var numberOfScrapes = process.argv[3];
 		var pauseSeconds = process.argv[4];
 		var x=0;
@@ -94,6 +91,24 @@ switch (action) {
 		}
 		doScrapeBody();
 	break;
+
+	case 'processMessage':
+		if(process.argv.length < 4) return console.error('processMessage usage: node app.js processMessage numberOfMessagesToProcess');
+		var numberOfMessagesToProcess = process.argv[3];
+		var x=0;
+		function doProcessMessage() {
+			setTimeout(function() {
+				if (x++ < numberOfMessagesToProcess) {
+					console.log('message count : ' + x);
+					couch.getEarliestUnprocessedMessageId(function(messageId){
+						storage.processMessage(messageId, doProcessMessage);
+					});
+				}
+			}, 0);
+		}
+		doProcessMessage();
+	break;
+
 
 	case 'denanny':
 		couch.getCensoredMessages(function(messages){
@@ -129,7 +144,7 @@ switch (action) {
 	break;
 
 	default:
-		return console.error('Usage: node app.js activity\n\nActivities:\n\tscrapeIndex\n\tprocessIndex\n\tscrapeMessageAjax\n\tscrapeMessageBody\n\tdenanny');
+		return console.error('Usage: node app.js activity\n\nActivities:\n\tscrapeIndex\n\tprocessIndex\n\tscrapeMessageAjax\n\tscrapeMessageBody\n\tdenanny\n\tprocessMessage');
 		break;
 }
 
