@@ -14,13 +14,17 @@ BEGIN
 	 GROUP BY p.UserId
 	 ORDER BY Posts DESC
 	 LIMIT rows;
-END$$$
+END
+$$$
 
-CREATE PROCEDURE RemovePost(IN postId INT)
+DROP PROCEDURE IF EXISTS RemovePost
+$$$
+CREATE PROCEDURE RemovePost(IN post_id INT)
 BEGIN
-	DELETE FROM WordInPost WHERE PostId = postId;
-	DELETE FROM Post WHERE PostId = postId;
-END $$$
+	DELETE FROM WordInPost WHERE PostId = post_id;
+	DELETE FROM Post WHERE PostId = post_id;
+END
+$$$
 
 DELIMITER ;
 

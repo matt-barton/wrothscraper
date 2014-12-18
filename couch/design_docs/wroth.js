@@ -107,6 +107,17 @@ module.exports = {
        
         return Math.min.apply(Math, ids)
       }
+    },
+
+    processedMessages: {
+
+      map: function(doc) {
+        if(doc.type && doc.type == 'message' && doc.complete && doc.processed) {
+          emit(doc.messageId, doc);
+        }
+      },
+
+      reduce: null
     }
   }
 };
