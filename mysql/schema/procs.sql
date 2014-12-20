@@ -71,6 +71,17 @@ BEGIN
 END
 $$$
 
+
+DROP PROCEDURE IF EXISTS PostCountByDate$$$
+CREATE PROCEDURE PostCountByDate()
+BEGIN
+	SELECT DATE(timestamp) AS Date, COUNT(PostId) AS Posts
+	  FROM Post
+  GROUP BY Date
+  ORDER BY Date DESC;
+END
+$$$
+
 DELIMITER ;
 
 
