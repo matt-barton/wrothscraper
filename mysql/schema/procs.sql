@@ -50,12 +50,24 @@ BEGIN
 	IF (rows IS NULL) THEN
 		SET rows = 9999;
 	END IF;
-	SELECT u.Username, p.LongestPost, p.PostId
+	SELECT u.Username, p.LongestPost, p.PostId, p.Timestamp
 	  FROM User u
 	  JOIN v_LongestPostByUser p
 	    ON u.UserId = p.UserId
 	 ORDER BY p.LongestPost DESC
 	 LIMIT rows;
+END
+$$$
+
+DROP PROCEDURE IF EXISTS ShowPost$$$
+CREATE PROCEDURE ShowPost(IN post_id INT)
+BEGIN
+	SELECT w.Word
+  	  FROM Word w
+	  JOIN WordInPost wp
+        ON w.WordId = wp.WordId
+	 WHERE wp.Postid = post_id
+  ORDER BY wp.Position;
 END
 $$$
 
