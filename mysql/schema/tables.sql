@@ -1,11 +1,6 @@
-DROP TABLE IF EXISTS 
-	WordInPost,
-	Post,
-	Word,
-	User,
-	DictionaryLookup;
 
-CREATE TABLE User
+
+CREATE TABLE IF NOT EXISTS User
 (
 	UserId INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	Username VARCHAR(250) NOT NULL, 
