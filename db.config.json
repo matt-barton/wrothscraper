@@ -7,6 +7,14 @@
     	
     }
   },
+  "remotecouch": {
+    "host"    : "192.168.1.66",
+    "port"    : 5984,
+    "db"      : "wrothscraper",
+    "options" : {
+      
+    }
+  },
   "mysql": {
   	"host" : "localhost",
   	"user" : "root",

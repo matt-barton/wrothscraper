@@ -207,6 +207,83 @@ switch (action) {
 		
 	break;
 
+	case 'testdb':
+		var cradle2 = require('cradle');
+		var remoteDb = new(cradle2.Connection)(dbConfig.remotecouch.host, dbConfig.remotecouch.port, dbConfig.remotecouch.options)
+		    .database(dbConfig.remotecouch.db);
+		var couch2 = require('./lib/couch')(remoteDb);
+		var error = false;
+		var id = 0;
+		var maxId = 600;
+		function doCompare() {
+			id++;
+			couch.getMessageById(
+				id, 
+				function(localMessage) {
+					// on success
+					couch2.getMessageById(
+						id, 
+						function(remoteMessage) {
+							// on success
+							if (localMessage.title == remoteMessage.title &&
+								localMessage.user == remoteMessage.user &&
+								localMessage.date == remoteMessage.date &&
+								localMessage.category == remoteMessage.category &&
+								localMessage.body == remoteMessage.body) {
+								console.log ("Message OK: " + id);
+								if (id < maxId) doCompare();
+							}
+							else {
+								console.error("Message is different locally/remotely: " + id);
+								error = true;
+							}
+						},
+						function() {
+							// on not present
+							error = true;
+							console.error ("Message exists locally, but not remotely: " + id);
+						},
+						function(e) {
+							// on error
+							error = true;
+							console.error(e);
+						},
+						false, false);
+				},
+				function() {
+					// on not present
+					couch2.getMessageById(
+						id, 
+						function(remoteMessage) {
+							// on success
+							error = true;
+							console.error ("Message exists remotely, but not locally: " + id);
+						},
+						function() {
+							// on not present
+							console.log ("Message missing locally and remotely: " + id);
+							if (id < maxId) doCompare();
+						},
+						function(e) {
+							// on error
+							error = true;
+							console.error(e);
+						},
+						false, false);
+				},
+				function(e) {
+					// on error
+					error = true;
+					console.error(e);
+				},
+				false, false);
+		}	
+		doCompare();
+	
+
+
+	break;
+
 	case 'test':
 		
 		console.error('No test setup');
